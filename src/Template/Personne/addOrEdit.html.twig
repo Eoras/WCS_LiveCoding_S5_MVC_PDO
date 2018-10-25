@@ -1,0 +1,76 @@
+{% extends '_base.html.twig' %}
+
+{% block title %}{{ parent() }} - {{ edit ? "Edit " ~ personne.prenom : "Add new Personne"}}{% endblock %}
+
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 mx-auto mt-3">
+
+            <div class="mb-5">
+                <a href="/personnes"
+                   title="Afficher la liste des personnes"
+                   data-tooltip="tooltip"
+                   data-placement="bottom"
+                   class="text-dark">
+                    <i class="fa fa-list fa-fw fa-2x"></i>
+                </a>
+                <a href="/"
+                   title="Accueil"
+                   data-tooltip="tooltip"
+                   data-placement="bottom"
+                   class="text-dark float-right">
+                    <i class="fa fa-home fa-fw fa-2x"></i>
+                </a>
+            </div>
+
+            <h2 class="mt-5">
+                <i class="fa fa-{{ edit ? "edit" : "plus" }} fa-fw"></i>
+                {{ edit ? "Edition de " ~ personne.prenom : "Ajout d'une personne" }}
+            </h2>
+
+            {# En fonction de si on est en EDIT ou en AJOUT on change les paramètre #}
+            <form action="/{{ edit ? "editPersonne/"~personne.id : "addPersonne" }}" method="POST">
+                {% if edit %}
+                    <input type="hidden" value="{{ personne.id }}" name="id">
+                {% endif %}
+                <div class="form-group">
+                    <label for="form_nom">Nom:</label>
+                    {# LE POST PASSE EN PRIORITAIRE A LA VALEUR DE LA PERSONNE #}
+                    {# Si un post.nom existe, tu l'affiche, sinon tu affiche personne.nom #}
+                    {# est envoyé à notre vue, SINON tu affiche rien du tout #}
+                    <input type="text" class="form-control" name="nom" id="form_nom"
+                           value="{{ post.nom ?? personne.nom }}">
+                    <small class="text-danger">{{ errors.nom }}</small>
+                </div>
+                <div class="form-group">
+                    <label for="form_prenom">Prénom:</label>
+                    <input type="text" class="form-control" name="prenom" id="form_prenom"
+                           value="{{ post.prenom ?? personne.prenom }}">
+                    <small class="text-danger">{{ errors.prenom }}</small>
+                </div>
+                <div class="form-group">
+                    <label for="form_email">E-mail:</label>
+                    <input type="text" class="form-control" name="email" id="form_email"
+                           value="{{ post.email ?? personne.email }}">
+                    <small class="text-danger">{{ errors.email }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="form_session_id">Session:</label>
+                    <select name="session_id" id="form_session_id" class="form-control">
+                        {% for session in sessions %}
+                            {# DOUBLE CONDITION TERNAIRE #}
+                            <option value="{{ session.id }}" {{ post.session_id == session.id ? "selected" : (personne.session_id == session.id ? "selected" : "") }}>{{ session.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="text-danger">{{ errors.session_id }}</small>
+                </div>
+
+                <button type="submit" class="btn btn-block btn-success"
+                        value="Enregistrer">{{ edit ? "Modifier" : "Ajouter" }}</button>
+                <small class="text-danger">{{ errors.general }}</small>
+            </form>
+        </div>
+    </div>
+{% endblock %}

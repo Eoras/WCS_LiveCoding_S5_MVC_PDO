@@ -1,0 +1,110 @@
+{% extends '_base.html.twig' %}
+
+{% block title %}{{ parent() }} - Show All Personne{% endblock %}
+
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 mx-auto mt-3">
+
+            <div class="mb-5">
+                <a href="/"
+                   title="Accueil"
+                   data-tooltip="tooltip"
+                   data-placement="bottom"
+                   class="text-dark">
+                    <i class="fa fa-home fa-fw fa-2x"></i>
+                </a>
+                <a href="/addPersonne"
+                   title="Ajouter une personne"
+                   data-tooltip="tooltip"
+                   data-placement="bottom"
+                   class="text-dark float-right">
+                    <i class="fa fa-user-plus fa-fw fa-2x"></i><br>
+                </a>
+            </div>
+
+            {# Si ma variable alerts existe et qu'elle est pas vide #}
+            {% if alerts is defined and not empty %}
+                {% for key, message in alerts %}
+                    <div class="alert alert-{{ key }} alert-dismissible fade show mb-2" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <h2>
+                <i class="fa fa-list fa-fw"></i>
+                Liste des personnes
+            </h2>
+            {{ personnes|length <= 0 ? "Aucune personne à montrer" : "" }}
+            <ul class="list-group">
+                {% for personne in personnes %}
+                    <li class="list-group-item">
+                        <div class="float-right">
+                            {# Bouton qui dirige vers ma seule et unique modale, en indiquant un data-id #}
+                            <button class="btn btn-light border"
+                                    type="button"
+                                    data-toggle="modal"
+                                    data-target="#deleteModal" data-id="{{ personne.id }}">
+                                <i class="fa fa-times fa-fw"></i>
+                            </button>
+                            <a class="btn btn-light border" href="/editPersonne/{{ personne.id }}"><i
+                                        class="fa fa-edit fa-fw"></i></a>
+                        </div>
+                        {{ personne.nom }} {{ personne.prenom }}<br>
+                        <small class="text-muted">{{ personne.session_name }} ({{ personne.session_ville }})</small>
+                    </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Suppression d'une personne</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Êtes vous sûre de vouloir supprimer {{ personne.nom }} {{ personne.prenom }}
+                </div>
+                <div class="modal-footer">
+                    <form action="/deletePersonne" method="POST">
+                        <small class="text-danger">Input HIDDEN avec ID (Merci JS)</small>
+                        <input type="hidden" name="personne_id">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Non
+                        </button>
+                        <button type="submit" class="btn btn-success">Oui</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{# On surcharge le block javascript, mais on appel bien les parent (car dans la base, je chargement de mon JS se #}
+{# trouve dans le bloc javascript. #}
+{# Ensuite j'ajoute un script (Doc BootStrap) pour passer un paramètre a ma modale #}
+{% block javascript %}
+{{ parent() }}
+
+<script>
+$('#deleteModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var recipient = button.data('id') // Extract info from data-* attributes
+  var modal = $(this)
+  modal.find('.modal-footer input').val(recipient)
+})
+</script>
+{% endblock %}

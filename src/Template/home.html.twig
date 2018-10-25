@@ -1,0 +1,31 @@
+{% extends '_base.html.twig' %}
+
+{% block title %}{{ parent() }} - Home{% endblock %}
+
+{% block body %}
+    <div class="row pt-3">
+        <div class="col-md-6 mx-auto">
+            <h1>Wilders Database</h1>
+            <div class="row mt-5 text-center">
+                <div class="col-6">
+                    <a href="/personnes"
+                       title="Afficher la liste des personnes"
+                       data-tooltip="tooltip"
+                       data-placement="bottom"
+                       class="text-dark">
+                        <i class="fa fa-list fa-fw fa-4x"></i>
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a href="/addPersonne"
+                       title="Ajouter une personne"
+                       data-tooltip="tooltip"
+                       data-placement="bottom"
+                       class="text-dark">
+                        <i class="fa fa-user-plus fa-fw fa-4x"></i><br>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
